@@ -19,6 +19,7 @@ function plugin(options) {
   }
 
   options.prefix = options.prefix || '';
+  options.suffix = options.suffix || '';
 
   options.replaceInExtensions = options.replaceInExtensions || ['.js', '.css', '.html', '.hbs'];
 
@@ -60,7 +61,7 @@ function plugin(options) {
         Object.keys(manifest).forEach(function (srcFile) {
           renames.push({
             unreved: canonicalizeUri(srcFile),
-            reved: options.prefix + canonicalizeUri(manifest[srcFile])
+            reved: options.prefix + canonicalizeUri(manifest[srcFile]) + options.suffix
           });
         });
       });
