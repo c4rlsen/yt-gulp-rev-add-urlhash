@@ -1,7 +1,7 @@
 {
   "name": "gulp-rev-replace-relative",
   "version": "0.4.3",
-  "description": "A copy of gulp-rev-replace, add support for relative path replacement.",
+  "description": "A copy of gulp-rev-replace, add current modified file as the second parameter of options.modifyUnreved.",
   "main": "index.js",
   "repository": "rodson/gulp-rev-replace",
   "scripts": {

@@ -1,12 +1,14 @@
 [gulp](https://github.com/wearefractal/gulp)-rev-replace [![Build Status](https://travis-ci.org/jamesknelson/gulp-rev-replace.svg?branch=master)](https://travis-ci.org/jamesknelson/gulp-rev-replace)
 ================
 
-Rewrite occurrences of filenames which have been renamed by gulp-rev
+A copy of gulp-rev-replace, add current modified file as the second parameter of options.modifyUnreved. So, we can use the current file path to modify the unreved to support relative path replacement.
+
+options.modifyUnreved(rename.unreved) -> options.modifyUnreved(rename.unreved, file.path)
 
 ## Install
 
 ```bash
-$ npm install --save-dev gulp-rev-replace
+$ npm install --save-dev gulp-rev-replace-relative
 ```
 
 
