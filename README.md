@@ -1,9 +1,9 @@
 [gulp](https://github.com/wearefractal/gulp)-rev-replace [![Build Status](https://travis-ci.org/jamesknelson/gulp-rev-replace.svg?branch=master)](https://travis-ci.org/jamesknelson/gulp-rev-replace)
 ================
 
-A copy of gulp-rev-replace, add current modified file as the second parameter of options.modifyUnreved. So, we can use the current file path to modify the unreved to support relative path replacement.
+A copy of gulp-rev-replace, add relative path replacement support.
 
-options.modifyUnreved(rename.unreved) -> options.modifyUnreved(rename.unreved, file.path)
+add `options.base` for relative path caculation.
 
 ## Install
 
