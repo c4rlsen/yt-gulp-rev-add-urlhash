@@ -61,6 +61,7 @@ function plugin(options) {
         Object.keys(manifest).forEach(function (srcFile) {
           renames.push({
             unreved: canonicalizeUri(srcFile),
+            revedOri: (options.noRev ? canonicalizeUri(srcFile) : canonicalizeUri(manifest[srcFile])),
             reved: options.prefix + (options.noRev ? canonicalizeUri(srcFile) : canonicalizeUri(manifest[srcFile])) + options.suffix
           });
         });
@@ -82,11 +83,14 @@ function plugin(options) {
         renames.forEach(function replaceOnce(rename) {
           var unreved = options.modifyUnreved ? options.modifyUnreved(rename.unreved) : rename.unreved;
           var reved = options.modifyReved ? options.modifyReved(rename.reved) : rename.reved;
+          var revedOri = rename.revedOri;
 
           // replace relative path
           var curDir = path.relative(options.base, path.dirname(file.path));
+          curDir = curDir.replace(/\\/g, "/");
           var relativeUnReved = path.relative(curDir, rename.unreved);
-          contents = contents.split(relativeUnReved).join('/' + reved);
+          relativeUnReved = relativeUnReved.replace(/\\/g, "/");
+          contents = contents.split(relativeUnReved).join('/' + revedOri);
 
           // replace absolute path
           contents = contents.split(unreved).join(reved);
