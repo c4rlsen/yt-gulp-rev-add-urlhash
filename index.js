@@ -61,7 +61,7 @@ function plugin(options) {
         Object.keys(manifest).forEach(function (srcFile) {
           renames.push({
             unreved: canonicalizeUri(srcFile),
-            reved: options.prefix + canonicalizeUri(manifest[srcFile]) + options.suffix
+            reved: options.prefix + (options.noRev ? canonicalizeUri(srcFile) : canonicalizeUri(manifest[srcFile])) + options.suffix
           });
         });
       });

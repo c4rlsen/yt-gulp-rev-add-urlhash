@@ -4,7 +4,10 @@
 A copy of gulp-rev-replace, add relative path replacement support.
 
 add `options.base` for relative path caculation.
+
 add `options.suffix`
+
+add `options.noRev` to replace relative path to absolute path without adding rev
 
 ## Install
 
