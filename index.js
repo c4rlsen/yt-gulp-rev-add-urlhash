@@ -90,7 +90,13 @@ function plugin(options) {
           curDir = curDir.replace(/\\/g, "/");
           var relativeUnReved = path.relative(curDir, rename.unreved);
           relativeUnReved = relativeUnReved.replace(/\\/g, "/");
-          contents = contents.split(relativeUnReved).join('/' + revedOri);
+          if (options.relative) {
+            var relativeRevedOri = path.relative(curDir, revedOri);
+            relativeRevedOri = relativeRevedOri.replace(/\\/g, "/");
+            contents = contents.split(relativeUnReved).join('/' + relativeRevedOri);
+          } else {
+            contents = contents.split(relativeUnReved).join('/' + revedOri);
+          }
 
           // replace absolute path
           contents = contents.split(unreved).join(reved);

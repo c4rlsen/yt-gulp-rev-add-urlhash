@@ -9,6 +9,8 @@ add `options.suffix`
 
 add `options.noRev` to replace relative path to absolute path without adding rev
 
+add `options.relative` not to change path to absolute
+
 ## Install
 
 ```bash
