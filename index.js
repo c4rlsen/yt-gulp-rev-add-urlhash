@@ -93,7 +93,7 @@ function plugin(options) {
           if (options.relative) {
             var relativeRevedOri = path.relative(curDir, revedOri);
             relativeRevedOri = relativeRevedOri.replace(/\\/g, "/");
-            contents = contents.split(relativeUnReved).join('/' + relativeRevedOri);
+            contents = contents.split(relativeUnReved).join(relativeRevedOri);
           } else {
             contents = contents.split(relativeUnReved).join('/' + revedOri);
           }
