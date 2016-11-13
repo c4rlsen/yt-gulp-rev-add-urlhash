@@ -99,7 +99,7 @@ function plugin(options) {
           }
 
           // replace absolute path
-          contents = contents.split(unreved).join(reved);
+          contents = contents.split(revedOri).join(reved);
 
           if (options.prefix) {
             contents = contents.split('/' + options.prefix).join(options.prefix + '/');
