@@ -84,22 +84,41 @@ function plugin(options) {
           var unreved = options.modifyUnreved ? options.modifyUnreved(rename.unreved) : rename.unreved;
           var reved = options.modifyReved ? options.modifyReved(rename.reved) : rename.reved;
           var revedOri = rename.revedOri;
+          console.log("______________");
+          // console.log("unreved: ", unreved);
+          // console.log("reved: ", reved);
+          // console.log("revedOri: ", revedOri);
+          // console.log("file.path: ", file.path);
 
           // replace relative path
           var curDir = path.relative(options.base, path.dirname(file.path));
           curDir = curDir.replace(/\\/g, "/");
+          // console.log("curDir: ", curDir);
+
           var relativeUnReved = path.relative(curDir, rename.unreved);
           relativeUnReved = relativeUnReved.replace(/\\/g, "/");
+
+          var basenameUnreved = path.basename(unreved);
+          var basenameRevedOri = path.basename(revedOri);
+
+           // console.log("rename unreved: ", rename.unreved);
+           console.log("basenameUnreved: ", basenameUnreved);
+           console.log("basenameRevedOri: ", basenameRevedOri);
+           // console.log("relativeUnReved: ", relativeUnReved);
+
           if (options.relative) {
             var relativeRevedOri = path.relative(curDir, revedOri);
             relativeRevedOri = relativeRevedOri.replace(/\\/g, "/");
-            contents = contents.split(relativeUnReved).join(relativeRevedOri);
+
+
+           // console.log("relativeRevedOri: ", relativeRevedOri);
+            contents = contents.split(basenameUnreved).join(basenameRevedOri);
           } else {
             contents = contents.split(relativeUnReved).join('/' + revedOri);
           }
 
           // replace absolute path
-          if (contents.indexOf(unreved) > 0) {
+          if (contents.indexOf(unreved) > 0 && false) {
             contents = contents.split(unreved).join(reved);
           } else {
             contents = contents.split(revedOri).join(reved);
