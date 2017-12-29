@@ -1,9 +1,9 @@
 {
   "name": "gulp-rev-replace-relative",
   "version": "0.5.8",
-  "description": "A copy of gulp-rev-replace, add relative path replacement support.",
+  "description": "A copy of gulp-rev-replace, add relative path replacement support. Forked by krachmueller",
   "main": "index.js",
-  "repository": "rodson/gulp-rev-replace",
+  "repository": "krachmueller/gulp-rev-replace",
   "scripts": {
     "test": "mocha"
   },
