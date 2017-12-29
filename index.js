@@ -84,7 +84,7 @@ function plugin(options) {
           var unreved = options.modifyUnreved ? options.modifyUnreved(rename.unreved) : rename.unreved;
           var reved = options.modifyReved ? options.modifyReved(rename.reved) : rename.reved;
           var revedOri = rename.revedOri;
-          console.log("______________");
+          // console.log("______________");
           // console.log("unreved: ", unreved);
           // console.log("reved: ", reved);
           // console.log("revedOri: ", revedOri);
@@ -102,8 +102,8 @@ function plugin(options) {
           var basenameRevedOri = path.basename(revedOri);
 
            // console.log("rename unreved: ", rename.unreved);
-           console.log("basenameUnreved: ", basenameUnreved);
-           console.log("basenameRevedOri: ", basenameRevedOri);
+           // console.log("basenameUnreved: ", basenameUnreved);
+           // console.log("basenameRevedOri: ", basenameRevedOri);
            // console.log("relativeUnReved: ", relativeUnReved);
 
           if (options.relative) {
