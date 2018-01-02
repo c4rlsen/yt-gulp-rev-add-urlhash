@@ -1,7 +1,7 @@
 {
   "name": "gulp-rev-add-urlhash",
   "version": "1.0.0",
-  "description": "A copy of gulp-rev-replace, add relative path replacement support. Forked by krachmueller. Combined with qwales1/gulp-assetpaths, to fix issues when adding url-hashes for polymer 1.0",
+  "description": "A copy of gulp-rev-replace-relative combined with qwales1/gulp-assetpaths, to fix issues when adding url-hashes to imports for polymer 1.0",
   "main": "index.js",
   "repository": "krachmueller/gulp-rev-replace",
   "scripts": {
