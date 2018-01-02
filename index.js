@@ -10,20 +10,11 @@
   var cache = [];
 
   if (!opts) {
-   throw new gutil.PluginError("gulp-assetpaths", "No parameters supplied");
+   throw new gutil.PluginError("gulp-rev-add-urlhash", "No parameters supplied");
   }
   if (!opts.filetypes || (!opts.filetypes instanceof Array)){
-   throw new gutil.PluginError("gulp-assetpaths", "Missing parameter : filetypes");
+   throw new gutil.PluginError("gulp-rev-add-urlhash", "Missing parameter : filetypes");
   }
-  // if (typeof(opts.newDomain) !== 'string' && !opts.newDomain){
-   // throw new gutil.PluginError("gulp-assetpaths", "Missing parameter : newDomain");
-  // }
-  // if (!opts.oldDomain){
-   // throw new gutil.PluginError("gulp-assetpaths", "Missing parameter : oldDomain");
-  // }
-  // if(typeof(opts.docRoot) !== 'string' && !opts.docRoot){
-   // throw new gutil.PluginError("gulp-assetpaths", "Missing parameter : docRoot");
-  // }
 
   if (!opts.canonicalUris) {
     opts.canonicalUris = true;
@@ -44,46 +35,19 @@
     }
   ];
 
-  //create custom attributes expressions
-  // if(opts.customAttributes){
-  //  var customAttrs = opts.customAttributes.map(function(attr){
-  //    return {
-  //      exp: new RegExp("\\b" + attr + "\\s*=\\s*(([\"{0,1}|'{0,1}]).*\\2)", "gi"),
-  //      captureGroup: 1,
-  //      templateCheck: /.*/
-  //    }
-  //  });
-  //  attrsAndProps = attrsAndProps.concat(customAttrs);
-  // }
+  function fmtPath(base, filePath) {
+    var newPath = path.relative(base, filePath);
 
-  // function setReplacementDomain(string){
- //     if(isRelative(opts.oldDomain)){
-  //    return new RegExp('(((\\bhttp\|\\bhttps):){0,1}\\/\\/' + string + ')');
-  //  } else {
-  //    return new RegExp(string);
-  //  }
+    return canonicalizeUri(newPath);
+  }
 
-  // }
+  function canonicalizeUri(filePath) {
+    if (path.sep !== '/' && opts.canonicalUris) {
+      filePath = filePath.split(path.sep).join('/');
+    }
 
-  // function isRelative(string, insertIndex){
-  //  return (string.indexOf('/') === -1 || string.indexOf('/') > insertIndex);
-  // }
-
-  // function getInsertIndex(string){
-  //  if(string.search(/^.{0,1}\s*("|')/) !== -1){
-  //    //check to see if template not using interpolated strings
-  //    var nonInter = /["|']\s*[+|.][^.]/.exec(string);
-  //    if(nonInter){
-  //      return string.search(/"|'/) === nonInter.index ? nonInter.index : (nonInter.index-1)
-  //    }
-  //    return (string.search(/"|'/)+1);
-  //  }
-  //  return 1;
-  // }
-
-  // function insertAtIndex(string, fragment, index){
-  //  return [string.slice(0, index), fragment, string.slice(index)].join("");
-  // }
+    return filePath;
+  }
 
   function ignoreUrl(match){
     var regEx = /((\bhttp|\bhttps):){0,1}\/\//;
@@ -108,7 +72,7 @@
     }
   }
 
-  // get
+  // From `gulp-rev-urlhash` to have comparable urls in function `getRevHash()`.
   function relPath(filePath, base) {
     // console.log('filePath:', filePath);
     // console.log('base:', base);
@@ -145,7 +109,8 @@
       // console.log("revedOri=%s ?== %s", revedOri, fullRelPath);
       // console.log("index:", revedOri.indexOf(fullRelPath));
       if (revedOri.indexOf(fullRelPath) > -1) {
-
+        // for debugging in network-waterfall, add element after hash and compare with url
+        // var element = revedOri.substring( revedOri.lastIndexOf('/') + 1, revedOri.lastIndexOf('.') );
         console.log("\n____\n\trevision found: ", revedOri, fullRelPath);
 
         return revedOri.substring(revedOri.indexOf('?v='));
@@ -184,77 +149,6 @@
     //pass back line if noop
     return line;
   }
-
-  // function countRelativeDirs(path){
-  //  var relDirs = path.filter(function(dir){
-  //    return dir.indexOf('..') !== -1 ? true : false;
-  //  });
-  //  return relDirs.length;
-  // }
-
-  // function anchorToRoot(string, file){
-  //  var index = getInsertIndex(string);
-  //  if(isRelative(string,index)){
-  //    //if the path isn't being dynamically generated(i.e. server or in template)
-  //    if(!(/^\s*[\(]{0,1}\s*["|']{0,1}\s*[<|{|.|+][^.]/.test(string))){
-  //      if(opts.docRoot){
-  //        var currentPath = string.split("/");
-  //        var relDirs = countRelativeDirs(currentPath);
-  //        string = string.replace(/\.\.\//g,"");
-  //        relDirs = relDirs > 0 ? relDirs : relDirs+1;
-  //        var fullPath = file.path.split("/").reverse().slice(relDirs);
-  //        if(fullPath.indexOf(opts.docRoot) !== -1){
-  //          while(fullPath[0] !== opts.docRoot){
-  //            string = insertAtIndex(string, fullPath[0] + '/', index);
-  //            fullPath = fullPath.slice(1);
-  //          }
-  //        }
-  //      }
-  //    }
-  //  }
-  //  return string;
-  // }
-
-  function absolute(base, relative) {
-    var stack = base.split("/"),
-        parts = relative.split("/");
-    // stack.pop(); // remove current file name (or empty string)
-                 // (omit if "base" is the current folder without trailing slash)
-
-      // console.log("stack:", stack);
-      // console.log("parts:", parts);
-
-
-    for (var i=0; i<parts.length; i++) {
-        if (parts[i] == ".") {
-            // console.log("parts[i] continue", parts[i]);
-            continue;
-        }
-        if (parts[i] == "..") {
-          // console.log("parts[i] pop");
-
-            stack.pop();
-          // console.log("parts[i] after pop", stack);
-        }
-        else {
-          // console.log("parts[i] push");
-            stack.push(parts[i]);
-          // console.log("parts[i] after push", stack);
-        }
-    }
-    // remove all leading forward-slashes, as this causes multiple forward-slashes in some cases
-    return stack.join("/").replace(/^\/+/g, '');
-  }
-
-  // function insertPath(string, file){
-  //  // console.log("string: ", string, path.basename(file));
-  //  var string = anchorToRoot(string, file);
-  //  var index = getInsertIndex(string);
-  //  if(isRelative(string, index)) {
-  //    string = insertAtIndex(string, '/', index);
-  //  }
-  //  return insertAtIndex(string, "XXXXXX", index);
-  // }
 
   function collectRevs(file, enc, callback){
     // Do nothing if no contents
@@ -347,17 +241,4 @@
 
   return through.obj(collectRevs, startRev);
 
-  function fmtPath(base, filePath) {
-    var newPath = path.relative(base, filePath);
-
-    return canonicalizeUri(newPath);
-  }
-
-  function canonicalizeUri(filePath) {
-    if (path.sep !== '/' && opts.canonicalUris) {
-      filePath = filePath.split(path.sep).join('/');
-    }
-
-    return filePath;
-  }
 };
