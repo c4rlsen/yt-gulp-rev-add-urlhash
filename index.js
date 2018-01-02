@@ -7,7 +7,7 @@
   'use strict';
   // var rootRegEx;
   var renames = [];
-  var cache = [];<
+  var cache = [];
 
   if (!opts) {
    throw new gutil.PluginError("gulp-assetpaths", "No parameters supplied");
@@ -145,7 +145,9 @@
       // console.log("revedOri=%s ?== %s", revedOri, fullRelPath);
       // console.log("index:", revedOri.indexOf(fullRelPath));
       if (revedOri.indexOf(fullRelPath) > -1) {
+
         console.log("\n____\n\trevision found: ", revedOri, fullRelPath);
+
         return revedOri.substring(revedOri.indexOf('?v='));
       }
 
