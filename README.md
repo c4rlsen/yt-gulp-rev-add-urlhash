@@ -1,7 +1,7 @@
 [gulp](https://github.com/wearefractal/gulp)-rev-replace [![Build Status](https://travis-ci.org/jamesknelson/gulp-rev-replace.svg?branch=master)](https://travis-ci.org/jamesknelson/gulp-rev-replace)
 ================
 
-A copy of gulp-rev-replace, add relative path replacement support.
+A copy of gulp-rev-replace, add relative path replacement support. Due to side-effects with relative urls and addition of url-hashes the gulp-assetpaths plugin was added partially to step line by line through the files and use regex to only replace occurences in specific templates. ( <link rel="import"> - Tag. )
 
 add `options.base` for relative path caculation.
 
