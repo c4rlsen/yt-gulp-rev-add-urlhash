@@ -1,7 +1,7 @@
 {
-  "name": "gulp-rev-replace-relative",
-  "version": "0.5.8",
-  "description": "A copy of gulp-rev-replace, add relative path replacement support. Forked by krachmueller",
+  "name": "gulp-rev-add-urlhash",
+  "version": "1.0.0",
+  "description": "A copy of gulp-rev-replace, add relative path replacement support. Forked by krachmueller. Combined with qwales1/gulp-assetpaths, to fix issues when adding url-hashes for polymer 1.0",
   "main": "index.js",
   "repository": "krachmueller/gulp-rev-replace",
   "scripts": {
@@ -13,20 +13,23 @@
     "revision",
     "version",
     "replace",
-    "asset"
+    "asset",
+    "polymer"
   ],
   "author": {
-    "name": "Rodson Luo",
-    "email": "rodsonluo@gmail.com",
-    "url": "http://www.rodsonluo.com"
+    "name": "Daniel Grehn",
+    "email": "daniel.grehn@yourstruly.de",
+    "url": "https://github.com/krachmueller"
   },
+  "repository": "krachmueller/gulp-rev-replace",
   "engines": {
     "node": ">=0.10.0"
   },
   "license": "MIT",
   "dependencies": {
+    "gulp-regex-replace": "^0.2.3",
     "gulp-util": "^3.0.7",
-    "through2": "^2.0.0"
+    "through2": "^2.0.1"
   },
   "devDependencies": {
     "event-stream": "^3.2.2",
