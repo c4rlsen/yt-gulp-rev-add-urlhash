@@ -154,6 +154,7 @@
           // create full path from relative paths in <link> elements to compare them to rev-manifest
           var cGCFullPath = path.resolve(path.dirname(file.path), cGroupClean);
           var cGCFullRelPath = relPath( cGCFullPath, file.base);
+          cGCFullRelPath = cGCFullRelPath.replace(/^\/+/g, '');
           var revHash = getRevHash(cGCFullRelPath);
 
           if (!!revHash) {
