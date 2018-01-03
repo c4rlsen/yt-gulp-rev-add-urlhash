@@ -111,14 +111,20 @@
   */
   function getRevHash(fullRelPath) {
     // console.log("\n\nstart...")
-
+    var flag = false;
+    if ( fullRelPath.indexOf('src/tui-application.html') > -1 ) {
+      console.log("path of tui-application: ", fullRelPath);
+      flag = true;
+    }
     for (var i = 0; i < renames.length; i++) {
       var rename = renames[i];
       var unreved = opts.modifyUnreved ? opts.modifyUnreved(rename.unreved) : rename.unreved;
       var reved = opts.modifyReved ? opts.modifyReved(rename.reved) : rename.reved;
       var revedOri = rename.revedOri;
-      // console.log("revedOri=%s ?== %s", revedOri, fullRelPath);
-      // console.log("index:", revedOri.indexOf(fullRelPath));
+      if (flag) {
+        console.log("revedOri=%s ?== fullRelPath=%s", revedOri, fullRelPath);
+        console.log("revedOri.indexOf(fullRelPath):", revedOri.indexOf(fullRelPath));
+      }
       if (revedOri.indexOf(fullRelPath) > -1) {
         // for debugging in network-waterfall, add element after hash and compare with url
         // var element = revedOri.substring( revedOri.lastIndexOf('/') + 1, revedOri.lastIndexOf('.') );
