@@ -111,29 +111,27 @@
   */
   function getRevHash(fullRelPath) {
     // console.log("\n\nstart...")
-    var flag = false;
-    if ( fullRelPath.indexOf('src/tui-application.html') > -1 ) {
-      console.log("path of tui-application: ", fullRelPath);
-      flag = true;
-    }
+
     for (var i = 0; i < renames.length; i++) {
       var rename = renames[i];
       var unreved = opts.modifyUnreved ? opts.modifyUnreved(rename.unreved) : rename.unreved;
       var reved = opts.modifyReved ? opts.modifyReved(rename.reved) : rename.reved;
       var revedOri = rename.revedOri;
-      if (flag) {
-        console.log("revedOri=%s ?== fullRelPath=%s", revedOri, fullRelPath);
-        console.log("revedOri.indexOf(fullRelPath):", revedOri.indexOf(fullRelPath));
-      }
+
       if (revedOri.indexOf(fullRelPath) > -1) {
         // for debugging in network-waterfall, add element after hash and compare with url
         // var element = revedOri.substring( revedOri.lastIndexOf('/') + 1, revedOri.lastIndexOf('.') );
-        console.log("\n____\n\trevision found: ", revedOri, fullRelPath);
 
+        // console.log("\n---\n◊ Revision found: ","color: green;", "color: inherit;", revedOri, fullRelPath, "\n---\n");
         return revedOri.substring(revedOri.indexOf('?v='));
       }
 
     }
+
+    // no revision found:
+    console.log("\n-------\nNo Revision found:\n\trevedOri=%s ?== fullRelPath=%s", revedOri, fullRelPath, "\n----------\n");
+    // console.log("revedOri.indexOf(fullRelPath):", revedOri.indexOf(fullRelPath), "\n-----\n");
+
     return null;
   }
   /**
@@ -154,6 +152,7 @@
           // create full path from relative paths in <link> elements to compare them to rev-manifest
           var cGCFullPath = path.resolve(path.dirname(file.path), cGroupClean);
           var cGCFullRelPath = relPath( cGCFullPath, file.base);
+
           cGCFullRelPath = cGCFullRelPath.replace(/^\/+/g, '');
           var revHash = getRevHash(cGCFullRelPath);
 
@@ -162,7 +161,7 @@
           }
           var cGroupNew = "\"" + cGroupClean + "\"";
 
-          console.log("cGroup.was=%s, now=%s", cGroup, cGroupNew, "\n\n");
+          // console.log("cGroup.was=%s, now=%s", cGroup, cGroupNew, "\n\n");
 
           return match.replace(cGroup, cGroupNew );
         }
@@ -204,7 +203,7 @@
 
     //## from gulp-rev-replace-relative
     } else {
-      console.log("\n\t\t-----\nignoring: ", path.basename(file.path),"\n\t\t-----\n");
+      // console.log("\n\t\t-----\nignoring: ", path.basename(file.path),"\n\t\t-----\n");
       // nothing to do with this file
       this.push(file);
 
