@@ -5,7 +5,7 @@
  module.exports = function(opts){
 
   'use strict';
-  // var rootRegEx;
+
   var renames = [];
   var cache = [];
 
@@ -26,8 +26,8 @@
   opts.replaceInExtensions = opts.replaceInExtensions || ['.js', '.css', '.html', '.hbs'];
 
   var filetypes = new RegExp('.' + opts.filetypes.join('|.'));
-  // console.log('######## filetypes', filetypes);
-  // var rootRegEx = setReplacementDomain(opts.oldDomain);
+
+  // template to match each processed line. <link>-tag and href
   var attrsAndProps = [
     { exp : /(<\s*)(.*?)\bhref\s*=\s*((["{0,1}|'{0,1}]).*?\4)(.*?)>/gi,
       captureGroup : 3,
@@ -58,7 +58,12 @@
     }
     return false;
   }
-
+  /**
+  * Check line before processing:
+  * - line must match regEx.templateCheck
+  * - href in line must match filetype
+  *
+  */
   function replacementCheck(cGroup, match, regEx){
     if(!opts.templates){
       return filetypes.test(cGroup);
@@ -97,7 +102,13 @@
     // console.log('mewPath:', newPath, "\n_____________\n")
     return newPath;
   }
-
+  /**
+  * Look-up the given path in the revision-manifest to get the matching url-hash.
+  * Return only the url-hash, to leave the path as is and only add the url-hash.
+  *
+  * @param {String} - path without leading forward-slash relative to the base
+  * @return {String} - url-hash e.g. ?v=34elsfls
+  */
   function getRevHash(fullRelPath) {
     // console.log("\n\nstart...")
 
@@ -119,7 +130,12 @@
     }
     return null;
   }
-
+  /**
+  * Process each line, which matches the template-regex and href-regex
+  * (from: `attrsAndProps`) to get the url, omit all others.
+  * Look-up the matching url-hash for caching purposes and add it to the
+  * url.
+  */
   function processLine(line, regEx, file){
 
     line = line.replace(regEx.exp, function(match){
@@ -139,7 +155,7 @@
           }
           var cGroupNew = "\"" + cGroupClean + "\"";
 
-                console.log("cGroup.was=%s, now=%s", cGroup, cGroupNew, "\n\n");
+          console.log("cGroup.was=%s, now=%s", cGroup, cGroupNew, "\n\n");
 
           return match.replace(cGroup, cGroupNew );
         }
@@ -149,7 +165,9 @@
     //pass back line if noop
     return line;
   }
-
+  /**
+  *
+  */
   function collectRevs(file, enc, callback){
     // Do nothing if no contents
     if(file.isNull()) {
@@ -160,12 +178,10 @@
     if (file.isStream()){
       return this.emit('error', new gutil.PluginError('gulp-assetpaths',  'Streaming not supported'));
     }
-
     // Collect renames from reved files.
     //## from gulp-rev-replace-relative
 
     // console.log("\t #### revOrigPath", file.revOrigPath);
-
     if (file.revOrigPath) {
       renames.push({
         unreved: fmtPath(file.revOrigBase, file.revOrigPath),
