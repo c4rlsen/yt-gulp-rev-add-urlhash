@@ -129,7 +129,7 @@
     }
 
     // no revision found:
-    console.log("\n-------\nNo Revision found:\n\trevedOri=%s ?== fullRelPath=%s", revedOri, fullRelPath, "\n----------\n");
+    console.log("\n-------\nNo Revision found:\n\tfullRelPath=%s", fullRelPath, "\n----------\n");
     // console.log("revedOri.indexOf(fullRelPath):", revedOri.indexOf(fullRelPath), "\n-----\n");
 
     return null;
