@@ -27,11 +27,15 @@
 
   var filetypes = new RegExp('.' + opts.filetypes.join('|.'));
 
-  // template to match each processed line. <link>-tag and href
+  // template to match each processed line. <link>-tag and href, and <script>-tag and src
   var attrsAndProps = [
     { exp : /(<\s*)(.*?)\bhref\s*=\s*((["{0,1}|'{0,1}]).*?\4)(.*?)>/gi,
       captureGroup : 3,
       templateCheck : /(<\s*){0,1}(\blink)(.*?)\brel=["']import["'](.*?)\bhref\s*=\s*/
+    },
+    { exp : /((<\s*){0,1}\bscript)(.*?)\bsrc\s*=\s*((["{0,1}|'{0,1}]).*?\5)/gi,
+        captureGroup : 4,
+        templateCheck : /(<\s*){0,1}(\bscript)(.*?)\bsrc\s*=\s*/
     }
   ];
 
