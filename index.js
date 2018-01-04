@@ -49,15 +49,7 @@
     return filePath;
   }
 
-  function ignoreUrl(match){
-    var regEx = /((\bhttp|\bhttps):){0,1}\/\//;
-    if(regEx.test(match)){
-      if((rootRegEx !== null) && (!rootRegEx.test(match))){
-        return true;
-      }
-    }
-    return false;
-  }
+
   /**
   * Check line before processing:
   * - line must match regEx.templateCheck
@@ -122,7 +114,7 @@
         // for debugging in network-waterfall, add element after hash and compare with url
         // var element = revedOri.substring( revedOri.lastIndexOf('/') + 1, revedOri.lastIndexOf('.') );
 
-        // console.log("\n---\n◊ Revision found: ","color: green;", "color: inherit;", revedOri, fullRelPath, "\n---\n");
+        // console.log("\n----> ◊ Revision found: ", revedOri, fullRelPath);
         return revedOri.substring(revedOri.indexOf('?v='));
       }
 
@@ -144,27 +136,25 @@
 
     line = line.replace(regEx.exp, function(match){
       var cGroup = arguments[regEx.captureGroup];
-      // console.log("\ncGroup, match: ",cGroup, match);
+      // console.log("\ncGroup, match: ",cGroup, match, arguments);
       if(replacementCheck(cGroup, match, regEx)){
-        if(!ignoreUrl(cGroup)){
 
-          var cGroupClean = cGroup.replace(/['"]+/g, '');
-          // create full path from relative paths in <link> elements to compare them to rev-manifest
-          var cGCFullPath = path.resolve(path.dirname(file.path), cGroupClean);
-          var cGCFullRelPath = relPath( cGCFullPath, file.base);
+        var cGroupClean = cGroup.replace(/['"]+/g, '');
+        // create full path from relative paths in <link> elements to compare them to rev-manifest
+        var cGCFullPath = path.resolve(path.dirname(file.path), cGroupClean);
+        var cGCFullRelPath = relPath( cGCFullPath, file.base);
 
-          cGCFullRelPath = cGCFullRelPath.replace(/^\/+/g, '');
-          var revHash = getRevHash(cGCFullRelPath);
+        cGCFullRelPath = cGCFullRelPath.replace(/^\/+/g, '');
+        var revHash = getRevHash(cGCFullRelPath);
 
-          if (!!revHash) {
-            cGroupClean+= revHash;
-          }
-          var cGroupNew = "\"" + cGroupClean + "\"";
-
-          // console.log("cGroup.was=%s, now=%s", cGroup, cGroupNew, "\n\n");
-
-          return match.replace(cGroup, cGroupNew );
+        if (!!revHash) {
+          cGroupClean+= revHash;
         }
+        var cGroupNew = "\"" + cGroupClean + "\"";
+        // console.log("cGroup.was=%s, now=%s", cGroup, cGroupNew, "\n\n");
+
+        return match.replace(cGroup, cGroupNew );
+
       }
       return match;
     });
@@ -182,7 +172,7 @@
     }
 
     if (file.isStream()){
-      return this.emit('error', new gutil.PluginError('gulp-assetpaths',  'Streaming not supported'));
+      return this.emit('error', new gutil.PluginError('gulp-rev-add-urlhash',  'Streaming not supported'));
     }
     // Collect renames from reved files.
     //## from gulp-rev-replace-relative
