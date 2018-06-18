@@ -1,5 +1,9 @@
-[gulp](https://github.com/wearefractal/gulp)-rev-replace [![Build Status](https://travis-ci.org/jamesknelson/gulp-rev-replace.svg?branch=master)](https://travis-ci.org/jamesknelson/gulp-rev-replace)
+yt-gulp-rev-add-urlhash
 ================
+
+This Plugin is used to purge the caches of html-imports by adding a hash with a version. To alter the gulp-rev-replace plugin was necessary because the replacement of urls by urls with version-queries ( f.e. "../tui-application.html?v=wl234l" ) had siteeffects simply using `indexOf`. Now line by line is processed and regular Expressions looking for `<link>` and `<script>` - Tags are used to make deadly sure only the indended urls are replaced with the same url extended by the url-hash-query.
+
+
 
 A copy of gulp-rev-replace, add relative path replacement support. Due to side-effects with relative urls and addition of url-hashes the gulp-assetpaths plugin was added partially to step line by line through the files and use regex to only replace occurences in specific templates. ( <link rel="import"> - Tag. )
 
