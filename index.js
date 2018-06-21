@@ -28,6 +28,9 @@
   var filetypes = new RegExp('.' + opts.filetypes.join('|.'));
 
   // template to match each processed line. <link>-tag and href, and <script>-tag and src
+  // parentesis in 'exp' define captureGroups to extract the value of href and src later on.
+  // the last templte is for all files that are difficult to match. There we add '?v=####CACHE####' to the
+  // import to find those dependencies in here and add a caching hash.
   var attrsAndProps = [
     { exp : /(<\s*)(.*?)\bhref\s*=\s*((["{0,1}|'{0,1}]).*?\4)(.*?)>/gi,
       captureGroup : 3,
@@ -36,6 +39,11 @@
     { exp : /((<\s*){0,1}\bscript)(.*?)\bsrc\s*=\s*((["{0,1}|'{0,1}]).*?\5)/gi,
         captureGroup : 4,
         templateCheck : /(<\s*){0,1}(\bscript)(.*?)\bsrc\s*=\s*/
+    },
+    {
+      exp: /(['"]\/.*\..*\?v=####CACHE####['"])/gi,
+      captureGroup: 1,
+      templateCheck: /['"]\/.*\..*\?v=####CACHE####['"]/
     }
   ];
 
@@ -66,7 +74,7 @@
     }
     if(regEx.templateCheck){
       // console.log("\n___", match);
-      // console.log("matching: filetypes=%s template=%s",filetypes.test(cGroup),regEx.templateCheck.test(match) );
+      // console.log("matching: filetypes=%s template=%s", filetypes.test(cGroup),regEx.templateCheck.test(match) );
       return filetypes.test(cGroup) && regEx.templateCheck.test(match);
     } else {
       return filetypes.test(cGroup);
@@ -114,6 +122,7 @@
       var reved = opts.modifyReved ? opts.modifyReved(rename.reved) : rename.reved;
       var revedOri = rename.revedOri;
 
+
       if (revedOri.indexOf(fullRelPath) > -1) {
         // for debugging in network-waterfall, add element after hash and compare with url
         // var element = revedOri.substring( revedOri.lastIndexOf('/') + 1, revedOri.lastIndexOf('.') );
@@ -126,6 +135,8 @@
 
     // no revision found:
     console.log("\n-------\nNo Revision found:\n\tfullRelPath=%s", fullRelPath, "\n----------\n");
+
+
     // console.log("revedOri.indexOf(fullRelPath):", revedOri.indexOf(fullRelPath), "\n-----\n");
 
     return null;
@@ -140,18 +151,21 @@
 
     line = line.replace(regEx.exp, function(match){
       var cGroup = arguments[regEx.captureGroup];
-      // console.log("\ncGroup, match: ",cGroup, match, arguments);
+      // console.log("\ncGroup, match: ",cGroup, match);
       if(replacementCheck(cGroup, match, regEx)){
 
-        var cGroupClean = cGroup.replace(/['"]+/g, '');
+        var cGroupClean = cGroup.replace(/['"]+/g, ''),
+            cGroupClean = cGroupClean.replace(/\?v=####CACHE####/g, '');
         // create full path from relative paths in <link> elements to compare them to rev-manifest
         var cGCFullPath = path.resolve(path.dirname(file.path), cGroupClean);
         var cGCFullRelPath = relPath( cGCFullPath, file.base);
 
         cGCFullRelPath = cGCFullRelPath.replace(/^\/+/g, '');
+
         var revHash = getRevHash(cGCFullRelPath);
 
         if (!!revHash) {
+
           cGroupClean+= revHash;
         }
         var cGroupNew = "\"" + cGroupClean + "\"";
