@@ -1,7 +1,7 @@
 yt-gulp-rev-add-urlhash
 ================
 
-This Plugin is used to purge the caches of html-imports by adding a hash with a version. To alter the gulp-rev-replace plugin was necessary because the replacement of urls by urls with version-queries ( f.e. "../tui-application.html?v=wl234l" ) had siteeffects simply using `indexOf`. Now line by line is processed and regular Expressions looking for `<link>` and `<script>` - Tags are used to make deadly sure only the indended urls are replaced with the same url extended by the url-hash-query.
+This Plugin is used to purge the caches of html-imports by adding a hash with a version. To alter the gulp-rev-replace plugin was necessary because the replacement of urls by urls with version-queries ( f.e. "../tui-application.html?v=wl234l" ) had siteeffects simply using `indexOf`. Now line by line is processed and regular Expressions looking for `<link>` and `<script>` - Tags are used to make deadly sure only the indended urls are replaced with the same url extended by the url-hash-query. Also manually with a fixed query-string ( tui-application.html?v=####CACHE#### ) marked dependencies are processed.
 
 
 
