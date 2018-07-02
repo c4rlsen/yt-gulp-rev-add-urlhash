@@ -1,6 +1,8 @@
- var gutil = require('gulp-util');
- var through = require('through2');
- var path = require('path');
+ var gutil = require('gulp-util')
+   , through = require('through2')
+   , path = require('path')
+   , chalk = require('chalk')
+   , fancyLog = require('fancy-log');
 
  module.exports = function(opts){
 
@@ -107,37 +109,25 @@
     return newPath;
   }
   /**
-  * Look-up the given path in the revision-manifest to get the matching url-hash.
-  * Return only the url-hash, to leave the path as is and only add the url-hash.
+  * get url-hash for all dependencies except those in `opts.ignoreMatchingUrls`
   *
   * @param {String} - path without leading forward-slash relative to the base
-  * @return {String} - url-hash e.g. ?v=34elsfls
+  * @return {String} - url-hash e.g. ?v=17
   */
-  function getRevHash(fullRelPath) {
-    // console.log("\n\nstart...")
+  function getRevHash(fullRelPath, urlHash) {
+    // console.log("\n\n________________\nfile=%s", fullRelPath);
+      for (var i = 0; i < opts.ignoreMatchingUrls.length; i++) {
+        var regExp = new RegExp(opts.ignoreMatchingUrls[i]);
+         if (!regExp.test(fullRelPath)) {
 
-    for (var i = 0; i < renames.length; i++) {
-      var rename = renames[i];
-      var unreved = opts.modifyUnreved ? opts.modifyUnreved(rename.unreved) : rename.unreved;
-      var reved = opts.modifyReved ? opts.modifyReved(rename.reved) : rename.reved;
-      var revedOri = rename.revedOri;
+           fancyLog("\t"+chalk.cyan("Add Hash")+": \""+ chalk.magenta(fullRelPath)+"\"");
+          return urlHash;
+         } else {
 
-
-      if (revedOri.indexOf(fullRelPath) > -1) {
-        // for debugging in network-waterfall, add element after hash and compare with url
-        // var element = revedOri.substring( revedOri.lastIndexOf('/') + 1, revedOri.lastIndexOf('.') );
-
-        // console.log("\n----> ◊ Revision found: ", revedOri, fullRelPath);
-        return revedOri.substring(revedOri.indexOf('?v='));
+            fancyLog("\tIgnore Match: \"" + chalk.magenta(fullRelPath) + "\" (regexp: "+ opts.ignoreMatchingUrls[i] +")");
+          return null;
+         }
       }
-
-    }
-
-    // no revision found:
-    console.log("\n-------\nNo Revision found:\n\tfullRelPath=%s", fullRelPath, "\n----------\n");
-
-
-    // console.log("revedOri.indexOf(fullRelPath):", revedOri.indexOf(fullRelPath), "\n-----\n");
 
     return null;
   }
@@ -162,10 +152,9 @@
 
         cGCFullRelPath = cGCFullRelPath.replace(/^\/+/g, '');
 
-        var revHash = getRevHash(cGCFullRelPath);
+        var revHash = getRevHash(cGCFullRelPath, "?v="+opts.urlHash);
 
         if (!!revHash) {
-
           cGroupClean+= revHash;
         }
         var cGroupNew = "\"" + cGroupClean + "\"";
@@ -178,6 +167,22 @@
     });
     //pass back line if noop
     return line;
+  }
+  /**
+  * only process file, if it is not in the regex-array
+  * `opts.ignoreFiles`
+  *
+  * @param {Array} - Array of Regex
+  * @param {String} - File-Path of acutal file in stream
+  */
+  function matchesRegExp(ignoreFiles, file) {
+    for (var i = 0; i < ignoreFiles.length; i++) {
+      var regExp = new RegExp(ignoreFiles[i]);
+      if (regExp.test(file)) {
+        return true;
+      }
+    }
+    return false;
   }
   /**
   *
@@ -196,25 +201,24 @@
     //## from gulp-rev-replace-relative
 
     // console.log("\t #### revOrigPath", file.revOrigPath);
-    if (file.revOrigPath) {
+    /*if (file.revOrigPath) {
       renames.push({
         unreved: fmtPath(file.revOrigBase, file.revOrigPath),
         reved: opts.prefix + fmtPath(file.base, file.path)
-      });
-    }
+     });
+    }*/
 
-    if (opts.replaceInExtensions.indexOf(path.extname(file.path)) > -1 && (!opts.ignoreFiles || opts.ignoreFiles.indexOf(path.basename(file.path)) < 0)) {
-      // file should be searched for replaces
+    // console.log("\t\tRegEXp ignore file=%s ? ignore-> %s",file.path,matchesRegExp(opts.ignoreFiles, file.path));
+    if (opts.replaceInExtensions.indexOf(path.extname(file.path)) > -1 && (!opts.ignoreFiles || !matchesRegExp(opts.ignoreFiles, file.path) )) { //opts.ignoreFiles.indexOf(path.basename(file.path)) < 0)) {
+
+      // push file for further processing
       cache.push(file);
-    // end ###
-      // console.log("processing: ", path.basename(file.path));
-
-    //## from gulp-rev-replace-relative
+      fancyLog(chalk.cyan("Processing: ") +"\""+ path.basename(file.path)+"\"");
     } else {
-      // console.log("\n\t\t-----\nignoring: ", path.basename(file.path),"\n\t\t-----\n");
+
       // nothing to do with this file
       this.push(file);
-
+      fancyLog("Ignoring: \"" + chalk.magenta(path.basename(file.path))+"\"");
     }
     // end ###
     callback();
@@ -247,6 +251,8 @@
       // Once we have a full list of renames, search/replace in the cached
       // files and push them through.
       cache.forEach(function replaceInFile(file) {
+        console.log("\n");
+        fancyLog("---> FILE: \""+chalk.magenta(file.path)+"\"");
         if(file.isBuffer()){
           var outfileContents = '';
           var contents = file.contents.toString('utf8')
@@ -268,6 +274,7 @@
       cb();
     }
   }
+  fancyLog("-> gulp-rev-add-urlhash: "+ chalk.cyan("PROCESS FILES AND ADD HASHES TO ITS DEPENDENCIES"));
 
   return through.obj(collectRevs, startRev);
 
