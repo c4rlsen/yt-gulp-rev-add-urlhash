@@ -115,6 +115,7 @@
   */
   function getRevHash(fullRelPath) {
     // console.log("\n\nstart...")
+
     for (var i = 0; i < renames.length; i++) {
       var rename = renames[i];
       var unreved = opts.modifyUnreved ? opts.modifyUnreved(rename.unreved) : rename.unreved;
